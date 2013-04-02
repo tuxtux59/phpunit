@@ -126,6 +126,20 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
     protected $backupStaticAttributesBlacklist = array();
 
     /**
+     * Whether or not garbage collection should be disabled for test execution.
+     *
+     * @var boolean
+     */
+    protected $disableGarbageCollectionForTestExecution = NULL;
+
+    /**
+     * Whether or not garbage collection should be disabled for test execution.
+     *
+     * @var boolean
+     */
+    protected $collectCyclesBeforeEachTest = NULL;
+
+    /**
      * Whether or not this test is to be run in a separate PHP process.
      *
      * @var boolean
@@ -842,6 +856,17 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
         // Backup the cwd
         $currentWorkingDirectory = getcwd();
 
+        // Disable garbage collection
+        if (gc_enabled()) {
+            if ($this->collectCyclesBeforeEachTest) {
+                gc_collect_cycles();
+            }
+
+            if ($this->disableGarbageCollectionForTestExecution) {
+                gc_disable();
+            }
+        }
+
         try {
             if ($this->inIsolation) {
                 $this->setUpBeforeClass();
@@ -907,6 +932,11 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
 
         ob_end_clean();
         $this->outputBufferingActive = FALSE;
+
+        // Enable garbage collection
+        if ($this->disableGarbageCollectionForTestExecution) {
+            gc_enable();
+        }
 
         // Clean up stat cache.
         clearstatcache();
@@ -1178,6 +1208,34 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
     {
         if (is_bool($inIsolation)) {
             $this->inIsolation = $inIsolation;
+        } else {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'boolean');
+        }
+    }
+
+    /**
+     * @param  boolean $disableGarbageCollectionForTestExecution
+     * @throws PHPUnit_Framework_Exception
+     * @since  Method available since Release 3.8.0
+     */
+    public function setDisableGarbageCollectionForTestExecution($disableGarbageCollectionForTestExecution)
+    {
+        if (is_bool($disableGarbageCollectionForTestExecution)) {
+            $this->disableGarbageCollectionForTestExecution = $disableGarbageCollectionForTestExecution;
+        } else {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'boolean');
+        }
+    }
+
+    /**
+     * @param  boolean $collectCyclesBeforeEachTest
+     * @throws PHPUnit_Framework_Exception
+     * @since  Method available since Release 3.8.0
+     */
+    public function setCollectCyclesBeforeEachTest($collectCyclesBeforeEachTest)
+    {
+        if (is_bool($collectCyclesBeforeEachTest)) {
+            $this->collectCyclesBeforeEachTest = $collectCyclesBeforeEachTest;
         } else {
             throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'boolean');
         }
