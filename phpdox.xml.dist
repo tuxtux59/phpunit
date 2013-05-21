@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<phpdox xmlns="http://phpdox.de/config" silent="false">
+    <project name="PHPUnit" source="${basedir}/PHPUnit" workdir="${basedir}/build/phpdox">
+        <collector publiconly="false" backend="parser">
+            <include mask="*.php" />
+            <exclude mask="*Autoload.php" />
+            <inheritance resolve="true" />
+        </collector>
 
-<phpdox xmlns="http://phpdox.de/config">
- <project name="PHPUnit" source="PHPUnit" workdir="build/phpdox">
-  <collector publiconly="false">
-   <include mask="*.php" />
-   <exclude mask="*Autoload.php" />
-  </collector>
+        <generator output="${basedir}/build">
+            <enrich path="${basedir}/build/logs">
+                <source type="checkstyle">
+                    <file name="checkstyle.xml" />
+                </source>
 
-  <generator output="build">
-   <build engine="html" enabled="true" output="api">
-    <file extension="html" />
-   </build>
-  </generator>
- </project>
+                <source type="pmd">
+                    <file name="pmd.xml" />
+                </source>
+
+                <source type="clover">
+                    <file name="clover.xml" />
+                </source>
+
+                <source type="phpunit">
+                    <file name="junit.xml" />
+                </source>
+            </enrich>
+
+            <build engine="html" enabled="true" output="api">
+                <template dir="${phpDox.home}/templates/html" />
+                <file extension="html" />
+            </build>
+
+            <build engine="graph" enabled="true" output="api">
+                <dot executable="/usr/bin/dot" options="" />
+                <file name="graph.png" options="" format="png" />
+            </build>
+        </generator>
+    </project>
 </phpdox>

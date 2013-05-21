@@ -151,6 +151,10 @@
   </exec>
  </target>
 
+ <target name="phpdox" description="Generate API documentation with phpDox" depends="prepare,phpcs-ci,phpmd-ci,phpunit">
+  <exec executable="phpdox" failonerror="true" />
+ </target>
+
  <target name="phpcb"
          description="Aggregate tool output with PHP_CodeBrowser">
   <exec executable="phpcb">
