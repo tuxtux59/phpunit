@@ -1090,7 +1090,6 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
             }
 
             $mockObject->__phpunit_verify();
-            $mockObject->__phpunit_cleanup();
         }
     }
 
@@ -1338,11 +1337,12 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
      * @param  boolean $callOriginalClone
      * @param  boolean $callAutoload
      * @param  boolean $cloneArguments
+     * @param  boolean $callOriginalMethods
      * @return PHPUnit_Framework_MockObject_MockObject
      * @throws PHPUnit_Framework_Exception
      * @since  Method available since Release 3.0.0
      */
-    public function getMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE, $cloneArguments = FALSE)
+    public function getMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE, $cloneArguments = FALSE, $callOriginalMethods = FALSE)
     {
         $mockObject = $this->mockObjectGenerator->getMock(
           $originalClassName,
@@ -1352,7 +1352,8 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
           $callOriginalConstructor,
           $callOriginalClone,
           $callAutoload,
-          $cloneArguments
+          $cloneArguments,
+          $callOriginalMethods
         );
 
         $this->mockObjects[] = $mockObject;
