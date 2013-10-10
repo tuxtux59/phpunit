@@ -10,4 +10,5 @@ class ExpectedErrorTest extends PHPUnit_Framework_TestCase
  include 'fichier_qui_n_existe_pas.php';
  }
 }
+textarea2
 ?>
